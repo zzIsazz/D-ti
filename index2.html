@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detect.AI</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <link rel="stylesheet" href="stylesheet2.css"> 
+</head>
+<body>
+    
+        <nav>
+            <div class="logo">
+                <img src="logo.png" alt="Logo" id="logo">
+            </div>
+            <ul class="nav-links">
+                <li><a href="#">Nossa I.A</a></li>
+                <li><a href="#">Para Empresas</a></li>
+                <li><a href="#">Sobre Nós</a></li>
+                <li><a href="#">Tutoriais</a></li>
+                <li><a href="#">Contato</a></li>
+            </ul>
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+        </nav>
+        <!-- Resto do código -->
+    
+    <h1>Déti para</h1>
+    <input type="file" id="imageUpload" accept="image/*">
+    <label for="imageUpload" id="uploadLabel">Escolher arquivo</label>
+    <button type="button" id="analyzeButton" disabled>Analisar</button>
+    <div id="label-container"></div>
+    <img id="imagePreview" alt="Aguardando imagem...">
+    <div id="message"></div>
+
+    <script type="text/javascript">
+        const URL = "https://teachablemachine.withgoogle.com/models/YqKE6_XWb/";
+        const ALERT_MESSAGE = "Cuidado! Isso pode se tratar de um golpe, siga as instruções desse link XXXXX para saber como se proteger.";
+
+        let model, labelContainer, maxPredictions;
+
+        async function init() {
+            try {
+                const modelURL = URL + "model.json";
+                const metadataURL = URL + "metadata.json";
+
+                model = await tmImage.load(modelURL, metadataURL);
+                maxPredictions = model.getTotalClasses();
+
+                labelContainer = document.getElementById("label-container");
+                for (let i = 0; i < maxPredictions; i++) {
+                    labelContainer.appendChild(document.createElement("div"));
+                }
+                console.log("Modelo carregado com sucesso");
+            } catch (error) {
+                console.error("Erro ao carregar o modelo:", error);
+            }
+        }
+
+        document.getElementById('imageUpload').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const img = document.getElementById('imagePreview');
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        document.getElementById('analyzeButton').disabled = false;
+                        console.log("Imagem carregada com sucesso");
+                    };
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('analyzeButton').addEventListener('click', async () => {
+            if (!model) {
+                console.error("O modelo não está carregado.");
+                return;
+            }
+
+            try {
+                const img = document.getElementById('imagePreview');
+                const prediction = await model.predict(img);
+                console.log("Previsão realizada com sucesso:", prediction);
+                
+                // Identifique a classe com a maior probabilidade
+                let maxProbability = 0;
+                let className = '';
+                
+                for (let i = 0; i < maxPredictions; i++) {
+                    const classPrediction = `${prediction[i].className}: ${(prediction[i].probability * 100).toFixed(2)}%`;
+                    labelContainer.childNodes[i].innerHTML = classPrediction;
+                    
+                    // Atualize a classe com maior probabilidade
+                    if (prediction[i].probability > maxProbability) {
+                        maxProbability = prediction[i].probability;
+                        className = prediction[i].className;
+                    }
+                }
+
+                // Atualize a mensagem com base na classe com a maior probabilidade
+                const messageElement = document.getElementById('message');
+                if (className.toLowerCase() === 'golpe') { // Verifique se o nome da classe está em minúsculas
+                    messageElement.textContent = "Cuidado! Isso pode se tratar de um golpe. Golpes com falsos prêmios em dinheiro são extremamente comuns, saiba como se proteger assistindo o vídeo abaixo!"
+                    const video = document.createElement('video');
+                video.id = 'warningVideo';
+                video.controls = true;
+                video.width = 600;
+                video.src = 'video-de-golpes.mp4'; // Substitua pelo caminho do seu vídeo
+                video.type = 'video/mp4';
+            
+            // Inserir o vídeo no DOM abaixo da mensagem
+            messageElement.appendChild(video);
+                } else {
+                    messageElement.textContent = "A imagem parece estar em ordem. No entanto, sempre fique atento.";
+                }
+                
+            } catch (error) {
+                console.error("Erro ao realizar a previsão:", error);
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>

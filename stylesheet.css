@@ -1,0 +1,93 @@
+/* stylesheet2.css */
+
+/* Reset básico para margens e preenchimentos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* Estilo do input de arquivo e label */
+#imageUpload {
+    display: none; /* Oculta o input de arquivo */
+}
+
+
+/* Estilo geral do corpo da página */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Estilo do título */
+h1 {
+    color: #4a90e2;
+    margin-bottom: 20px;
+}
+
+
+/* Estilo do botão para escolher arquivo */
+#uploadLabel {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4a90e2;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
+}
+
+#uploadLabel:hover {
+    background-color: #357abd;
+}
+
+/* Estilo do botão de análise */
+#analyzeButton {
+    padding: 10px 20px;
+    background-color: #50e3c2;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#analyzeButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#analyzeButton:hover:enabled {
+    background-color: #3ecf8e;
+}
+
+/* Estilo para a visualização da imagem */
+#imagePreview {
+    max-width: 100%;
+    height: auto;
+    margin: 20px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Estilo para o container de rótulos */
+#label-container {
+    margin-top: 20px;
+}
+
+/* Estilo para o container de mensagens */
+#message {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
